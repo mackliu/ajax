@@ -22,13 +22,13 @@
 </div>
     </div>
     <div class="menu">
-        <a href="#">首頁</a>
-        <a href="#">健康天地</a>
-        <a href="#">籃球介紹</a>
-        <a href="#">棒球介紹</a>
-        <a href="#">游泳介紹</a>
-        <a href="#">訪客留言</a>
-        <a href="#">資料來源</a>
+        <a href="index.html">首頁</a>
+        <a href="#" onclick="loadpage('health.html')">健康天地</a>
+        <a href="#" onclick="loadpage('baseball.html')">籃球介紹</a>
+        <a href="#" onclick="loadpage('basketball.html')">棒球介紹</a>
+        <a href="#" onclick="loadpage('swimming.html')">游泳介紹</a>
+        <a href="#" onclick="loadpage('msgboard.html')">訪客留言</a>
+        <a href="#" onclick="loadpage('reference.html')">資料來源</a>
     </div>
     <div class="content">
     </div>
@@ -41,6 +41,13 @@
 </html>
 <script>
 //建立一個函式loadpage(page)用來載入內容至content區塊中
+loadpage("main.html");
 
+function loadpage(page){
+  $.get("./results/"+page,function(res){
+    console.log(res)
+    $(".content").html(res)
+  })
+}
 
 </script>
