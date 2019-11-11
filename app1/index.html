@@ -44,10 +44,12 @@
 loadpage("main.html");
 
 function loadpage(page){
-  $.get("./results/"+page,function(res){
-    console.log(res)
+/*   $.get("./results/"+page,function(res){
     $(".content").html(res)
-  })
+  }) */
+
+  $(".content").load("./results/"+page)
+
 }
 
 </script>
