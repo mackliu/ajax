@@ -97,11 +97,19 @@
 
 $("#delCancel").on("click",function(){
   $("#modal").hide();
+  $("body").css("overflow","auto")
 })
 //新增資料的函式
 function create(){
 
 }
+
+$("#delBtn").on("click",function(){
+  let user=$(this).attr("data-uid");
+  console.log(user)
+  del(user)
+  $("#modal").hide();
+})
 
 query('1');
 
@@ -116,9 +124,22 @@ function query(cl){
   $.get("./api/query.php",{"class":cl},function(res){
    // console.log(res)
     $("table").html(res)
+
     $(".del-user").on("click",function(){
+      let user=$(this).data("del")
+      console.log(user)
+      //del(user)
+      $("#delBtn").attr("data-uid",user);
       //document.getElementById("modal").style.display="block";
+
+      //計算彈出視窗垂直位置
+      let boxAlign=($(window).height()-$("#delete").height())/2+$(document).scrollTop();
+        console.log(boxAlign)
+        $("#modal").css("top",$(document).scrollTop())
        $("#modal").show();
+
+       //隱藏滾動軸
+       $("body").css("overflow","hidden")
     })
   })
 }
@@ -129,8 +150,17 @@ function update(){
 }
 
 //刪除資料的函式
-function del(){
+function del(id){
+  $.post("./api/delete.php",{id},function(res){
+    let _class=$("#class").val();
 
+    //重新載入資料
+    query(_class)
+    
+    //自動顯示滾動軸
+    $("body").css("overflow","auto")
+    
+  })
 }
 
 </script>
