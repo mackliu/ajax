@@ -16,6 +16,7 @@ echo "<td>姓名</td>";
 echo "<td>科系</td>";
 echo "<td>生日</td>";
 echo "<td>學號</td>";
+echo "<td>操作</td>";
 echo "</tr>";
 
 
@@ -27,6 +28,10 @@ foreach($rows as $r){
     echo "<td>".$r['dept']."</td>";
     echo "<td>".$r['birthday']."</td>";
     echo "<td>".$r['uni_id']."</td>";
+    echo "<td>";
+    echo "<button class='edit-user' data-edit='".$r['uni_id']."'>編輯</button>";
+    echo "<button class='del-user' data-del='".$r['uni_id']."'>刪除</button>";
+    echo "</td>";
     echo "</tr>";
 }
 ?>

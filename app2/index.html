@@ -20,12 +20,39 @@
       border:1px solid #999;
       padding:5px;
     }
+    #modal{
+      display:none;
+      width:100%;
+      height:100vh;
+      background:rgba(200,200,200,0.7);
+      position:absolute;
+      z-index: 90;
+      top:0;
+      left:0;
+    }
+
+    #delete{
+      background:white;
+      width:300px;
+      height:200px;
+      position:absolute;
+      left:calc(50vw - 150px);
+      top:calc(50vh - 150px);
+      border:1px solid #999;
+      box-shadow: 0 0 5px #ccc;
+      text-align: center;
+      padding:20px;
+    }
+
+    #delete .msg{
+      margin:10px;
+    }
     </style>
 
 </head>
 <body>
   <h1 class="header">學生資料管理系統</h1>
-<button>新增學生資料</button><br><br>
+<button id="addData">新增學生資料</button><br><br>
 <select name="class" id="class">
   <option value="1">一年一班</option>
   <option value="2">一年二班</option>
@@ -38,10 +65,23 @@
   <option value="9">一年九班</option>
   <option value="10">一年十班</option>
 </select>
+
  <table>
 
 
  </table> 
+
+
+ <div id="modal">
+  <div id="delete">
+    <div class="msg">確認刪除嗎?</div>
+    <div id="btns">
+      <button id="delBtn">確認刪除</button>
+      <button id="delCancel">取消</button>
+    </div>
+
+  </div>
+ </div>
 </body>
 </html>
 <script>
@@ -52,8 +92,12 @@
 * 4.是否會有回傳值？回傳值的功用及處理？
 * 5.是否需要更新畫面內容？更新畫面的方法？
 ************************************/
+//各項傾聽事件
 
 
+$("#delCancel").on("click",function(){
+  $("#modal").hide();
+})
 //新增資料的函式
 function create(){
 
@@ -70,8 +114,12 @@ $("#class").on("change",function(){
 //查詢資料的函式
 function query(cl){
   $.get("./api/query.php",{"class":cl},function(res){
-    console.log(res)
+   // console.log(res)
     $("table").html(res)
+    $(".del-user").on("click",function(){
+      //document.getElementById("modal").style.display="block";
+       $("#modal").show();
+    })
   })
 }
 
