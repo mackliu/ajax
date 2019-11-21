@@ -177,9 +177,23 @@ $("#addData").on("click",function(){
   //按鈕控制
   $("#insertBtn").show();
   $("#updateBtn").hide();
+  $("#uni_id").attr("disabled",false);
 
   //隱藏滾動軸
   $("body").css("overflow","hidden")
+
+  $("#uni_id").val("")
+      $("#class_num").val("")
+      $("#name").val("")
+      $("#birthday").val("")
+      $("#nat_id").val("")
+      $("#addr").val("")
+      $("#parent").val("")
+      $("#tel").val("")
+      
+      $("#grad_at").val("")
+
+
 })
 
 $("#insertBtn").on("click",function(){
@@ -201,6 +215,53 @@ $.post("./api/insert.php",{uni_id, class_num, name, birthday, nat_id, addr, pare
     console.log("新增成功")
   }else{
     console.log("新增異常")
+  }
+
+ $("#modal").hide();
+ let _class=$("#class").val();
+
+  //重新載入資料
+  query(_class)
+
+  //顯示滾動軸
+  $("body").css("overflow","auto")  
+
+})
+
+})
+
+$("#updateBtn").on("click",function(){
+  let uni_id=$("#uni_id").val()
+  let class_num=$("#class_num").val()
+  let name=$("#name").val()
+  let birthday=$("#birthday").val()
+  let nat_id=$("#nat_id").val()
+  let addr=$("#addr").val()
+  let parent=$("#parent").val()
+  let tel=$("#tel").val()
+  let dept=$("#dept").val()
+  let grad_at=$("#grad_at").val()
+
+  $.post(
+    "./api/update.php",
+    {
+      uni_id, 
+      class_num, 
+      name, 
+      birthday, 
+      nat_id, 
+      addr, 
+      parent, 
+      tel, 
+      dept, 
+      grad_at
+    },
+    function(res){
+  console.log(res)
+  if(res==1){
+    console.log("更新成功")
+  }else{
+    console.log("更新異常")
   }
 
  $("#modal").hide();
@@ -277,6 +338,7 @@ function query(cl){
       //按鈕控制
       $("#insertBtn").hide();
       $("#updateBtn").show();
+      $("#uni_id").attr("disabled",true);
 
       //隱藏滾動軸
       $("body").css("overflow","hidden")
@@ -286,6 +348,28 @@ function query(cl){
 
       //設定modal的新位置
       $("#modal").css("top",$(document).scrollTop())
+
+      let uni_id=$(this).data("edit")
+      console.log(uni_id)
+      $.get("./api/get_stu_api.php",{uni_id},function(stu){
+        console.log(stu)
+        let stu_data=JSON.parse(stu)
+        console.log(stu_data)
+
+      $("#uni_id").val(stu_data.uni_id)
+      $("#class_num").val(stu_data.class_num)
+      $("#name").val(stu_data.name)
+      $("#birthday").val(stu_data.birthday)
+      $("#nat_id").val(stu_data.nat_id)
+      $("#addr").val(stu_data.addr)
+      $("#parent").val(stu_data.parent)
+      $("#tel").val(stu_data.tel)
+      $("#dept").val(stu_data.dept)
+      $("#grad_at").val(stu_data.grad_at)
+
+
+      })
+
     })
   })
 }
