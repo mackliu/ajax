@@ -47,6 +47,34 @@
     #delete .msg{
       margin:10px;
     }
+    #edit{
+      width: 450px;
+      padding: 20px;
+      border: 1px solid #999;
+      box-shadow: 0 0 5px #ccc;
+      background: white;
+      left:calc(50vw - 225px);
+      top:calc(50vh - 200px);
+      position:absolute;
+    }
+    #edit li label {
+      display: inline-block;
+      vertical-align: middle;
+      width: 100px;
+      text-align-last: justify;
+      font-size: 18px;
+    }
+
+    #edit li input,
+    #edit li select {
+      padding: 3px;
+      font-size: 18px;
+      -webkit-appearance: none;
+    }
+
+    #edit li {
+      margin: 5px 0;
+    }
     </style>
 
 </head>
@@ -71,16 +99,44 @@
 
  </table> 
 
-
  <div id="modal">
+  <!--刪除確認對話框-->
   <div id="delete">
     <div class="msg">確認刪除嗎?</div>
     <div id="btns">
       <button id="delBtn">確認刪除</button>
       <button id="delCancel">取消</button>
     </div>
-
   </div>
+
+  <!--新增/編輯資料對話框-->
+  <div id="edit">
+      <form  id="userform">
+        <li><label for="uni_id">學號</label>：<input type="number" name="uni_id" id="uni_id"></li>
+        <li><label for="class_num">班級座號</label>：<input type="number" name="class_num" id="class_num"></li>
+        <li><label for="name">姓名</label>：<input type="text" name="name" id="name"></li>
+        <li><label for="birthday">出生年月日</label>：<input type="date" name="birthday" id="birthday"></li>
+        <li><label for="nat_id">身份證字號</label>：<input type="text" name="nat_id" id="nat_id"></li>
+        <li><label for="addr">住址</label>：<input type="text" name="addr" id="addr"></li>
+        <li><label for="parent">父母</label>：<input type="text" name="parent" id="parent"></li>
+        <li><label for="tel">電話</label>：<input type="text" name="tel" id="tel"></li>
+        <li><label for="dept">科別</label>：
+          <select name="dept" id="dept">
+            <option value="商業經營科">商業經營科</option>
+            <option value="國際貿易科">國際貿易科</option>
+            <option value="資料處理科">資料處理科</option>
+            <option value="幼兒保育科">幼兒保育科</option>
+            <option value="美容科">美容科</option>
+            <option value="室內佈置科">室內佈置科</option>
+          </select>
+        </li>
+        <li><label for="grad_at">畢業國中</label>：<input type="text" name="grad_at" id="grad_at"></li>
+        <input type="button" value="新增" id="insertBtn">
+        <input type="button" value="修改" id="updateBtn">
+        <input type="reset" value="取消" id="cancelBtn">
+      </form>
+    </div>
+  
  </div>
 </body>
 </html>
@@ -92,17 +148,13 @@
 * 4.是否會有回傳值？回傳值的功用及處理？
 * 5.是否需要更新畫面內容？更新畫面的方法？
 ************************************/
-//各項傾聽事件
 
 
-$("#delCancel").on("click",function(){
+//************以下都是事件處理**********
+$("#delCancel,#cancelBtn").on("click",function(){
   $("#modal").hide();
   $("body").css("overflow","auto")
 })
-//新增資料的函式
-function create(){
-
-}
 
 $("#delBtn").on("click",function(){
   let user=$(this).attr("data-uid");
@@ -111,7 +163,60 @@ $("#delBtn").on("click",function(){
   $("#modal").hide();
 })
 
-query('1');
+//註冊新增按鈕事件
+$("#addData").on("click",function(){
+
+  //modal顯示內容的控制
+  $("#modal").show();
+  $("#edit").show();
+  $("#delete").hide();
+
+  //設定modal的新位置
+  $("#modal").css("top",0)
+
+  //按鈕控制
+  $("#insertBtn").show();
+  $("#updateBtn").hide();
+
+  //隱藏滾動軸
+  $("body").css("overflow","hidden")
+})
+
+$("#insertBtn").on("click",function(){
+let uni_id=$("#uni_id").val()
+let class_num=$("#class_num").val()
+let name=$("#name").val()
+let birthday=$("#birthday").val()
+let nat_id=$("#nat_id").val()
+let addr=$("#addr").val()
+let parent=$("#parent").val()
+let tel=$("#tel").val()
+let dept=$("#dept").val()
+let grad_at=$("#grad_at").val()
+
+console.log(uni_id, class_num, name, birthday, nat_id, addr, parent, tel, dept, grad_at)
+
+$.post("./api/insert.php",{uni_id, class_num, name, birthday, nat_id, addr, parent, tel, dept, grad_at},function(res){
+  if(res==1){
+    console.log("新增成功")
+  }else{
+    console.log("新增異常")
+  }
+
+ $("#modal").hide();
+ let _class=$("#class").val();
+
+  //重新載入資料
+  query(_class)
+
+  //顯示滾動軸
+  $("body").css("overflow","auto")  
+
+})
+
+})
+
+
 
 $("#class").on("change",function(){
   let cl=$(this).val()
@@ -119,27 +224,68 @@ $("#class").on("change",function(){
 })
 
 
+//**********以下都是載入網頁後優先執行的函式或工作*******
+
+query('1');
+
+//****************以下都是自訂函式***********
+
+//新增資料的函式
+function create(){
+
+
+}
+
 //查詢資料的函式
 function query(cl){
   $.get("./api/query.php",{"class":cl},function(res){
    // console.log(res)
     $("table").html(res)
 
+    //註冊刪除按鈕事件
     $(".del-user").on("click",function(){
+      
+      //取得學生學號
       let user=$(this).data("del")
-      console.log(user)
-      //del(user)
+
+      //將學號寫入到刪除確認按鈕的屬性中
       $("#delBtn").attr("data-uid",user);
-      //document.getElementById("modal").style.display="block";
 
       //計算彈出視窗垂直位置
       let boxAlign=($(window).height()-$("#delete").height())/2+$(document).scrollTop();
-        console.log(boxAlign)
-        $("#modal").css("top",$(document).scrollTop())
+      
+      //設定modal的新位置
+      $("#modal").css("top",$(document).scrollTop())
+      
+      //modal顯示內容的控制
        $("#modal").show();
+       $("#edit").hide();
+       $("#delete").show();
 
        //隱藏滾動軸
        $("body").css("overflow","hidden")
+    })
+
+    //註冊編輯按鈕事件
+    $(".edit-user").on("click",function(){
+
+      //modal顯示內容的控制
+      $("#modal").show();
+      $("#edit").show();
+      $("#delete").hide();
+  
+      //按鈕控制
+      $("#insertBtn").hide();
+      $("#updateBtn").show();
+
+      //隱藏滾動軸
+      $("body").css("overflow","hidden")
+
+      //計算彈出視窗垂直位置
+      let boxAlign=($(window).height()-$("#delete").height())/2+$(document).scrollTop();
+
+      //設定modal的新位置
+      $("#modal").css("top",$(document).scrollTop())
     })
   })
 }
